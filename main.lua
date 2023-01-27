@@ -7,11 +7,20 @@ require 'src/Dependencies'
 --runs once when the game starts
 function love.load()
 
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
+        resizable = true
+    })
+
     love.window.setTitle('Game Title')
  
     math.randomseed(os.time())
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
+
+    gFonts = {
+        ['title'] = love.graphics.newFont('fonts/Antique Quest St.ttf', 64),
+        ['ui'] = love.graphics.newFont('fonts/CalligraphyFLF.ttf', 32)
+    }
 
     gStateMachine = StateMachine{
         ['start'] = function() return StartState() end,
