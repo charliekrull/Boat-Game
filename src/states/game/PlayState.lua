@@ -50,11 +50,19 @@ end
 
 function PlayState:generateWorld(width, height)
     local returnedTiles = {}
+    local frequency = 2 * math.random() + 1
+    local amplitude = math.random() * 0.7 + 0.8
+    print(frequency, amplitude)
+
+
     for y = 1, height do
         returnedTiles[y] = {}
         for x = 1, width do
-            local roll = love.math.noise(x, y)
-            if roll <= 0.9 then
+            
+            local roll = love.math.noise(((x/width) - 0.5) * frequency, 
+                ((y/height) - 0.5) * frequency) * amplitude
+
+            if roll <= 0.85 then
                 local t = Tile{
                     x = x,
                     y = y,

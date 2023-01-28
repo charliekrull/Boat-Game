@@ -1,6 +1,9 @@
 Player = Class{__includes = Entity}
 
 function Player:update(dt)
+    self.velX = 0
+    self.velY = 0
+    
     if love.keyboard.isDown('w') then
         self.velY = -self.moveSpeed
     end
@@ -15,7 +18,7 @@ function Player:update(dt)
     end
     --so it's not faster to go diagonally, divide by sqrt 2 if moving in both x and y dimensions
     if self.velX ~=0 and self.velY ~= 0 then
-        self.velX = self.velX / math.sqrt(2)
+        self.velX = self.velX  / math.sqrt(2)
         self.velY = self.velY / math.sqrt(2)
     end
 
