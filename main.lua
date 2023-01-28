@@ -15,7 +15,7 @@ function love.load()
  
     math.randomseed(os.time())
 
-    love.graphics.setDefaultFilter('nearest', 'nearest')
+    love.graphics.setDefaultFilter('linear', 'linear')
 
     gFonts = {
         ['title'] = love.graphics.newFont('fonts/Antique Quest St.ttf', 64),
