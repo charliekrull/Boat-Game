@@ -30,6 +30,7 @@ function love.load()
     gStateMachine:change('start')
 
     love.keyboard.keysPressed = {}
+    love.mouse.clicks = {}
 
 
 end
@@ -42,6 +43,17 @@ function love.keyboard.wasPressed(key)
     return love.keyboard.keysPressed[key]
 end
 
+function love.mousepressed(x, y, button)
+    table.insert(love.mouse.clicks, {x = x, y = y, button = button})
+
+end
+
+function love.mouse.buttonsPressed()
+
+    return love.mouse.clicks
+    
+end
+
 
 
 --called every frame
@@ -50,6 +62,7 @@ function love.update(dt)
     gStateMachine:update(dt)
 
     love.keyboard.keysPressed = {}
+    love.mouse.clicks = {}
 end
 
 function love.draw() 

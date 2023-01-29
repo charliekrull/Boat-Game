@@ -7,11 +7,13 @@ function PlayState:init()
 
     self.entities = {}
     self.currentMap = TileMap{
-        width = 100,
-        height = 100 
+        width = WORLD_WIDTH,
+        height = WORLD_HEIGHT 
     }
     self.currentMap.tiles = self:generateWorld(self.currentMap.width, self.currentMap.height)
 
+    self.currentMap:getAutoTileValues()
+    self.currentMap:applyAutoTile()
     table.insert(self.entities, self.player)
 end
 
@@ -51,8 +53,8 @@ end
 function PlayState:generateWorld(width, height)
     local returnedTiles = {}
     local frequency = 2 * math.random() + 1
-    local amplitude = math.random() * 0.7 + 0.8
-    print(frequency, amplitude)
+    local amplitude = math.random() * 0.7 + 0.9
+    
 
 
     for y = 1, height do
@@ -66,21 +68,24 @@ function PlayState:generateWorld(width, height)
                 local t = Tile{
                     x = x,
                     y = y,
-                    texture = TILE_DEFS.water.texture,
-                    frame = TILE_DEFS.water.frame
+                    texture = 'tilesheet',
+                    frame = 73
+
                 }
                 returnedTiles[y][x] = t
             else
                 local t = Tile{
                     x = x,
                     y = y,
-                    texture = TILE_DEFS.sand.texture,
-                    frame = TILE_DEFS.sand.frame
+                    texture = 'tilesheet',
+                    frame = 18
                 }
 
                 returnedTiles[y][x] = t
             end
         end
     end
+
+    --insert the function that assigns the right tiles based on surrounding tiles
     return returnedTiles
 end
