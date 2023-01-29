@@ -28,41 +28,24 @@ gFrames = {['tilesheet'] = GenerateQuads(gTextures['tilesheet'], 64, 64)
 
     }
 
-gAutoTileDict = {}
-for k = 0, 15 do
-    if k == 3 then
-        gAutoTileDict[k] = 33
+gAutoTileDict = {[0] = 69,
+    [1] = 69,
+    [2] = 69,
+    [3] = 33,
+    [4] = 69,
+    [5] = 69,
+    [6] = 1,
+    [7] = 17,
+    [8] = 69,
+    [9] = 35,
+    [10] = 69,
+    [11] = 34,
+    [12] = 3,
+    [13] = 19,
+    [14] = 2,
+    [15] = 68}
 
-    elseif k == 6 then
-        gAutoTileDict[k] = 1
-
-    elseif k == 7 then
-        gAutoTileDict[k] = 17
-    
-    elseif k == 9 then
-        gAutoTileDict[k] = 35
-    
-    elseif k == 11 then
-        gAutoTileDict[k] = 34
-
-    elseif k == 12 then
-        gAutoTileDict[k] = 3
-
-    elseif k == 13 then
-        gAutoTileDict[k] = 19
-
-    elseif k == 14 then
-        gAutoTileDict[k] = 2
-    
-    elseif k == 15 then
-        gAutoTileDict[k] = 68
-        
-    else
-        gAutoTileDict[k] = 73
-    
-        
-    end
         
         
-end
+
 gAutoTileDict[73] = 73

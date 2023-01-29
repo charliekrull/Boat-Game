@@ -106,8 +106,9 @@ function TileMap:applyAutoTile()
         for y = 1, self.height do
             for x = 1, self.width do
                 if self.tiles[z][y][x] then
-                    self.tiles[z][y][x].frame = gAutoTileDict[self.tiles[z][y][x].autoTileFrame]
-            
+                    if self.tiles[z][y][x].frame ~= 73 then --if it's not water, change its frame according to the autotile algorithm
+                        self.tiles[z][y][x].frame = gAutoTileDict[self.tiles[z][y][x].autoTileFrame]
+                    end
                 end
             end
         end

@@ -22,10 +22,6 @@ function PlayState:update(dt)
     if love.keyboard.wasPressed('escape') then
         love.event.quit()
     end
-
-    for k, click in pairs(love.mouse.buttonsPressed()) do
-        print_r(self.currentMap:pointToTile(click.x + self.camX, click.y + self.camY))
-    end
     
     for k, entity in pairs(self.entities) do
         entity:update(dt)
