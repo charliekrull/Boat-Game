@@ -8,9 +8,10 @@ function PlayState:init()
     self.entities = {}
     self.currentMap = TileMap{
         width = WORLD_WIDTH,
-        height = WORLD_HEIGHT 
+        height = WORLD_HEIGHT,
+        layers = 2 
     }
-    self.currentMap.tiles = self:generateWorld(self.currentMap.width, self.currentMap.height)
+    self.currentMap.tiles = self:generateWorld(self.currentMap.width, self.currentMap.height, self.currentMap.layers)
 
     self.currentMap:getAutoTileValues()
     self.currentMap:applyAutoTile()
@@ -20,6 +21,10 @@ end
 function PlayState:update(dt) 
     if love.keyboard.wasPressed('escape') then
         love.event.quit()
+    end
+
+    for k, click in pairs(love.mouse.buttonsPressed()) do
+        print_r(self.currentMap:pointToTile(click.x + self.camX, click.y + self.camY))
     end
     
     for k, entity in pairs(self.entities) do
@@ -50,38 +55,45 @@ function PlayState:updateCamera()
         self.player.y - (WINDOW_HEIGHT / 2 - (TILE_SIZE/2))))
 end
 
-function PlayState:generateWorld(width, height)
+function PlayState:generateWorld(width, height, layers)
     local returnedTiles = {}
     local frequency = 2 * math.random() + 1
     local amplitude = math.random() * 0.7 + 0.9
     
 
+    for z = 1, layers do
+        returnedTiles[z] = {}
+        for y = 1, height do
+            returnedTiles[z][y] = {}
+            for x = 1, width do
 
-    for y = 1, height do
-        returnedTiles[y] = {}
-        for x = 1, width do
-            
-            local roll = love.math.noise(((x/width) - 0.5) * frequency, 
-                ((y/height) - 0.5) * frequency) * amplitude
+                if z == 1 then
 
-            if roll <= 0.85 then
-                local t = Tile{
-                    x = x,
-                    y = y,
-                    texture = 'tilesheet',
-                    frame = 73
+                    local t = Tile{
+                        x = x,
+                        y = y,
+                        texture = 'tilesheet',
+                        frame = 73
+                    }
+                    returnedTiles[z][y][x] = t
 
-                }
-                returnedTiles[y][x] = t
-            else
-                local t = Tile{
-                    x = x,
-                    y = y,
-                    texture = 'tilesheet',
-                    frame = 18
-                }
+                elseif z == 2 then
+                
+                    local roll = love.math.noise(((x/width) - 0.5) * frequency, 
+                        ((y/height) - 0.5) * frequency) * amplitude
 
-                returnedTiles[y][x] = t
+                    if roll >= 0.85 then
+                        
+                        local t = Tile{
+                            x = x,
+                            y = y,
+                            texture = 'tilesheet',
+                            frame = 18
+                        }
+
+                        returnedTiles[z][y][x] = t
+                    end
+                end
             end
         end
     end

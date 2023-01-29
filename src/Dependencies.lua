@@ -55,7 +55,7 @@ for k = 0, 15 do
         gAutoTileDict[k] = 2
     
     elseif k == 15 then
-        gAutoTileDict[k] = 18
+        gAutoTileDict[k] = 68
         
     else
         gAutoTileDict[k] = 73
@@ -65,3 +65,4 @@ for k = 0, 15 do
         
         
 end
+gAutoTileDict[73] = 73
