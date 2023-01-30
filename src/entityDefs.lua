@@ -5,6 +5,6 @@ ENTITIES = {
         width = 64,
         height = 112,
         image = love.graphics.newImage('graphics/PNG/Ships/ship (1).png'),
-        moveSpeed = 420 --lol
+        moveSpeed = 450 --fast for now
     }
 }

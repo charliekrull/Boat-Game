@@ -15,6 +15,8 @@ function PlayState:init()
 
     self.currentMap:getAutoTileValues()
     self.currentMap:applyAutoTile()
+
+    self.player.tileMap = self.currentMap
     table.insert(self.entities, self.player)
 end
 
@@ -69,7 +71,8 @@ function PlayState:generateWorld(width, height, layers)
                         x = x,
                         y = y,
                         texture = 'tilesheet',
-                        frame = 73
+                        frame = 73,
+                        land = false
                     }
                     returnedTiles[z][y][x] = t
 
@@ -84,7 +87,8 @@ function PlayState:generateWorld(width, height, layers)
                             x = x,
                             y = y,
                             texture = 'tilesheet',
-                            frame = 18
+                            frame = 18,
+                            land = true
                         }
 
                         returnedTiles[z][y][x] = t

@@ -5,9 +5,12 @@ function Tile:init(def)
     self.y = def.y
     self.texture = def.texture
     self.frame = def.frame
+    self.land = def.land
     self.autoTileFrame = self.frame
     self.surroundingLand = {}
-
+    self.width = TILE_SIZE
+    self.height = TILE_SIZE
+    
 end
 
 function Tile:update(dt)
