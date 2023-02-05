@@ -3,9 +3,9 @@ PlayState = Class{__includes = BaseState}
 function PlayState:init()
     self.camX = 0
     self.camY = 0
-    self.player = Player(ENTITIES['player'])
+    
 
-    self.entities = {}
+    self.ships = {}
     self.currentMap = TileMap{
         width = WORLD_WIDTH,
         height = WORLD_HEIGHT,
@@ -15,9 +15,50 @@ function PlayState:init()
 
     self.currentMap:getAutoTileValues()
     self.currentMap:applyAutoTile()
+    
+    self.currentMap:renderToCanvas()
 
-    self.player.tileMap = self.currentMap
-    table.insert(self.entities, self.player)
+    --self.player.tileMap = self.currentMap
+
+    
+    
+    --physics world
+    self.world = love.physics.newWorld(0, 0, WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE)
+
+    function beginContact(a, b, coll)
+        local types = {}
+
+        types[a:getUserData()] = true
+        types[b:getUserData()] = true
+
+        if types['Player'] and types['Land'] then
+            local playerFixture = a:getUserData() == 'Player' and a or b
+            local landFixture = a:getUserData() == 'Land' and a or b
+            self.player.velX = 0
+            self.player.velY = 0
+            self.player.beached = true
+        end
+    end
+
+    function endContact(a, b, coll)
+
+    end
+    
+    function preSolve(a, b, coll)
+
+    end
+
+    function postSolve(a, b, coll, normalImpulse, tangentImpulse)
+        
+    end
+
+    self.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+    self.landFixtures = self:addLandFixtures()
+    
+
+    self.player = Player(self.world, SHIPS['player'], 10 * TILE_SIZE, 10 * TILE_SIZE, 'Player')
+    table.insert(self.ships, self.player)
+    
 end
 
 function PlayState:update(dt) 
@@ -25,11 +66,19 @@ function PlayState:update(dt)
         love.event.quit()
     end
     
-    for k, entity in pairs(self.entities) do
-        entity:update(dt)
+    for k, ship in pairs(self.ships) do
+        ship:update(dt)
     end
 
+    self.world:update(dt)
+
     self:updateCamera()
+
+    if love.keyboard.wasPressed('b') then
+        if self.player.beached then
+            self.player.beached = false
+        end
+    end
    
 end
 
@@ -38,10 +87,16 @@ function PlayState:render()
     love.graphics.translate(-math.floor(self.camX), -math.floor(self.camY))
     self.currentMap:render()
     love.graphics.setColor(1, 1, 1, 1)
-    for k, entity in pairs(self.entities) do
-        entity:render()
+    for k, ship in pairs(self.ships) do
+        ship:render()
+        
     end
     love.graphics.pop()
+    love.graphics.setColor(0, 0, 0, 1) --black
+    love.graphics.print('sailDeployed: '..self.player.sailDeployed, 3, 3)
+    love.graphics.print('velX: '..math.floor(self.player.velX), 3, 23)
+    love.graphics.print('velY: '..math.floor(self.player.velY), 3, 43)
+    love.graphics.setColor(1, 1, 1, 1)
     
 end
 
@@ -98,6 +153,28 @@ function PlayState:generateWorld(width, height, layers)
         end
     end
 
-    --insert the function that assigns the right tiles based on surrounding tiles
     return returnedTiles
+end
+
+function PlayState:addLandFixtures()
+    local returnedFixtures = {}
+    for y = 1, WORLD_HEIGHT do
+        for x = 1, WORLD_WIDTH do
+            local id = self.currentMap:getTopTile(x, y).frame
+            local isLand = false --assume it's water to start
+            for i = 1, #LAND_TILE_VALUES do
+                if LAND_TILE_VALUES[i] == id then
+                    isLand = true
+                end
+            end
+            if isLand then
+                local bod = love.physics.newBody(self.world, x * TILE_SIZE, y * TILE_SIZE, 'static')
+                local shape = love.physics.newRectangleShape(32, 32, TILE_SIZE, TILE_SIZE)
+                local fix = love.physics.newFixture(bod, shape)
+                fix:setUserData('Land')
+                table.insert(returnedFixtures, fix)
+            end
+        end
+    end
+    return returnedFixtures
 end

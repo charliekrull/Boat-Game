@@ -5,13 +5,15 @@ function TileMap:init(def)
     self.height = def.height
     self.layers = def.layers
     self.tiles = {}
+    self.canvas = love.graphics.newCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE)
 end
 
 function TileMap:update(dt)
-
+    
 end
 
-function TileMap:render()
+function TileMap:renderToCanvas()
+    love.graphics.setCanvas(self.canvas)
     for z = 1, self.layers do
         for y = 1, self.height do
             for x = 1, self.width do
@@ -20,7 +22,12 @@ function TileMap:render()
                 end
             end
         end
-    end
+    end 
+    love.graphics.setCanvas()
+end
+
+function TileMap:render()
+    love.graphics.draw(self.canvas, 0, 0)
 end
 
 --output the tile that the point (x, y) is on
