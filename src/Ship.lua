@@ -19,14 +19,27 @@ function Ship:init(world, def, x, y, userData)
 
     self.beached = false
 
-    self.body = love.physics.newBody(self.world, x + self.width / 2, y + self.height / 2,
+    self.body = love.physics.newBody(self.world, x - self.width / 2, y - self.height / 2,
         'dynamic')
+    self.body:setMass(def.mass)
+    self.body:setInertia(def.inertia)
+    self.body:setAngularDamping(0.75)
 
-    self.shape = love.physics.newPolygonShape(0, 4, self.width, 4, self.width/2, self.height)
+    self.shape = love.physics.newPolygonShape(6, 6, 
+        self.width - 5, 6, 
+        20, self.height - 12, 
+        self.width - 19, self.height - 12,
+        self.width/2, self.height
+    )
     
     self.fixture = love.physics.newFixture(self.body, self.shape)
 
+   
+    
+
     self.fixture:setUserData(userData)
+    
+    --self.body:setAngularDamping(5)
     
 
 end
@@ -46,9 +59,10 @@ function Ship:update(dt)
         self.sailDeployed = 0
     end
     --update position based on speed
-    self.body:setLinearVelocity(self.velX, self.velY)
-    self.x = self.body:getX() - self.width/2
-    self.y = self.body:getY() - self.height/2
+    self.fixture:getBody():setLinearVelocity(self.velX, self.velY)
+    self.x = self.body:getX() 
+    self.y = self.body:getY()
+    self.rotation = self.body:getAngle()
     --move collision rect with Ship
     
     -- self.collisionRect:update(dt)
@@ -69,8 +83,13 @@ function Ship:update(dt)
 end
 
 function Ship:render()
-    love.graphics.draw(self.image, self.x, self.y, self.rotation, 1, 1, 
-    self.width/2, self.height/2)
+    love.graphics.draw(self.image, self.x, self.y, self.rotation)
+    --love.graphics.setColor(1, 0, 0, 1)
+    -- love.graphics.polygon('line', self.fixture:getBody():getWorldPoints(
+    --         self.fixture:getShape():getPoints())
+    -- )
+    --love.graphics.circle('fill', self.fixture:getBody():getX(), self.fixture:getBody():getY(), 10)
+    love.graphics.setColor(1, 1, 1, 1)
     --self.collisionRect:render()
 end
 

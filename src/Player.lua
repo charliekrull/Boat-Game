@@ -2,11 +2,13 @@ Player = Class{__includes = Ship}
 
 function Player:init(world, def, x, y, userData)
     Ship.init(self, world, def, x, y, userData)
+    
 end
 
 function Player:update(dt)
     self.velX = 0
     self.velY = 0
+   
     
     
     if love.keyboard.isDown('w') then
@@ -14,14 +16,16 @@ function Player:update(dt)
         self.sailDeployed = math.min(100, self.sailDeployed + self.sailDeploySpeed  * dt)
     end
     if love.keyboard.isDown('a') then
-        self.rotation = self.rotation - self.rotationSpeed * dt
+        self.body:applyTorque(-1000)
+        --self.rotation = self.rotation - self.rotationSpeed * dt
     end
     if love.keyboard.isDown('s') then
         --self.velY = self.moveSpeed
         self.sailDeployed = math.max(0, self.sailDeployed - self.sailDeploySpeed * dt)
     end
     if love.keyboard.isDown('d') then
-        self.rotation = self.rotation + self.rotationSpeed * dt
+        self.body:applyTorque(1000)
+        --self.rotation = self.rotation + self.rotationSpeed * dt
     end
 
     

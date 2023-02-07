@@ -36,7 +36,9 @@ function PlayState:init()
             local landFixture = a:getUserData() == 'Land' and a or b
             self.player.velX = 0
             self.player.velY = 0
+            self.player.fixture:getBody():setLinearVelocity(0, 0)
             self.player.beached = true
+            
         end
     end
 
@@ -91,6 +93,11 @@ function PlayState:render()
         ship:render()
         
     end
+
+    -- for k, fix in pairs(self.landFixtures) do
+    --     love.graphics.rectangle('line', fix:getBody():getX(), fix:getBody():getY(),
+    --     TILE_SIZE, TILE_SIZE)
+    -- end
     love.graphics.pop()
     love.graphics.setColor(0, 0, 0, 1) --black
     love.graphics.print('sailDeployed: '..self.player.sailDeployed, 3, 3)
@@ -168,7 +175,7 @@ function PlayState:addLandFixtures()
                 end
             end
             if isLand then
-                local bod = love.physics.newBody(self.world, x * TILE_SIZE, y * TILE_SIZE, 'static')
+                local bod = love.physics.newBody(self.world, (x-1) * TILE_SIZE, (y - 1) * TILE_SIZE, 'static')
                 local shape = love.physics.newRectangleShape(32, 32, TILE_SIZE, TILE_SIZE)
                 local fix = love.physics.newFixture(bod, shape)
                 fix:setUserData('Land')
