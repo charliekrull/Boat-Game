@@ -51,3 +51,5 @@ gAutoTileDict = {[0] = 69,
         
 
 gAutoTileDict[73] = 73
+
+gSounds = {['crash'] = love.audio.newSource('sounds/Crash.wav', 'static')}

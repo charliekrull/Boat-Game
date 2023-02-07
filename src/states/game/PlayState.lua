@@ -38,7 +38,8 @@ function PlayState:init()
             self.player.velY = 0
             self.player.fixture:getBody():setLinearVelocity(0, 0)
             self.player.beached = true
-            
+            gSounds['crash']:stop()
+            gSounds['crash']:play()
         end
     end
 
