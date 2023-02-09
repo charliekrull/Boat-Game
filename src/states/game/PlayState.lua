@@ -37,6 +37,8 @@ function PlayState:init()
             self.player.velX = 0
             self.player.velY = 0
             self.player.fixture:getBody():setLinearVelocity(0, 0)
+            self.player.health = self.player.health - 20
+            self.player.healthBar:setValue(self.player.health)
             self.player.beached = true
             gSounds['crash']:stop()
             gSounds['crash']:play()
@@ -100,20 +102,22 @@ function PlayState:render()
     --     TILE_SIZE, TILE_SIZE)
     -- end
     love.graphics.pop()
+    self.player.healthBar:render()
     love.graphics.setColor(0, 0, 0, 1) --black
-    love.graphics.print('sailDeployed: '..self.player.sailDeployed, 3, 3)
-    love.graphics.print('velX: '..math.floor(self.player.velX), 3, 23)
-    love.graphics.print('velY: '..math.floor(self.player.velY), 3, 43)
+    love.graphics.print('sailDeployed: '..self.player.sailDeployed, 4, WINDOW_HEIGHT - 64)
+    love.graphics.print('velX: '..math.floor(self.player.velX), 4, WINDOW_HEIGHT - 44)
+    love.graphics.print('velY: '..math.floor(self.player.velY), 4, WINDOW_HEIGHT - 24)
     love.graphics.setColor(1, 1, 1, 1)
     
 end
 
 function PlayState:updateCamera()
+    local centerOfMassX, centerOfMassY = self.player.body:getWorldCenter()
     self.camX = math.max(0, math.min(TILE_SIZE * self.currentMap.width - WINDOW_WIDTH,
-        self.player.x - (WINDOW_WIDTH / 2 - (TILE_SIZE/2))))
+        centerOfMassX - (WINDOW_WIDTH / 2 - (TILE_SIZE/2))))
 
     self.camY = math.max(0, math.min(TILE_SIZE * self.currentMap.height - WINDOW_HEIGHT,
-        self.player.y - (WINDOW_HEIGHT / 2 - (TILE_SIZE/2))))
+        centerOfMassY - (WINDOW_HEIGHT / 2 - (TILE_SIZE/2))))
 end
 
 function PlayState:generateWorld(width, height, layers)

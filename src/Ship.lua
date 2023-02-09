@@ -13,9 +13,14 @@ function Ship:init(world, def, x, y, userData)
     self.velY = 0
     self.rotation = 0
     self.rotationSpeed = def.rotationSpeed
+
     
     self.sailDeployed = 0 --0 to 100
     self.sailDeploySpeed = def.sailDeploySpeed
+    self.steerForce = def.steerForce
+    self.strafeForce = def.strafeForce
+    self.maxHealth = def.maxHealth
+    self.health = self.maxHealth
 
     self.beached = false
 
@@ -83,6 +88,7 @@ function Ship:update(dt)
 end
 
 function Ship:render()
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.image, self.x, self.y, self.rotation)
     --love.graphics.setColor(1, 0, 0, 1)
     -- love.graphics.polygon('line', self.fixture:getBody():getWorldPoints(

@@ -16,6 +16,8 @@ require 'src/tileDefs'
 require 'src/TileMap'
 require 'src/util'
 
+require 'src/gui/ProgressBar'
+
 
 require 'src/states/BaseState'
 

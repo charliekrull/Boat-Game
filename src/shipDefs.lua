@@ -7,6 +7,9 @@ SHIPS = {
         rotationSpeed = math.pi, --radians per second
         sailDeploySpeed = 50,
         mass = 3000,
-        inertia = 3000
+        inertia = 3000,
+        steerForce = 1000,
+        strafeForce = 10000,
+        maxHealth = 100
     }
 }
