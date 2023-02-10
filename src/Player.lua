@@ -5,8 +5,8 @@ function Player:init(world, def, x, y, userData)
     self.healthBar = ProgressBar{
         x = 4,
         y = 6,
-        width = WINDOW_WIDTH/4,
-        height = 24,
+        width = 24,
+        height = WINDOW_HEIGHT / 3,
         max = self.maxHealth,
         value = self.health,
         color = {['r'] = 1,
@@ -71,6 +71,11 @@ function Player:update(dt)
     Ship.update(self, dt)
 end
 
+
 function Player:render()
     Ship.render(self)
+end
+
+function Player:takeDamage(amount)
+    Ship.takeDamage(self, amount)
 end

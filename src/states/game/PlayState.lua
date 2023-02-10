@@ -15,6 +15,14 @@ function PlayState:init()
 
     self.currentMap:getAutoTileValues()
     self.currentMap:applyAutoTile()
+    self.windField = self:generateWindField()
+    self.windDirCanvas = love.graphics.newCanvas(TILE_SIZE, TILE_SIZE)
+    love.graphics.setCanvas(self.windDirCanvas)
+    love.graphics.line(TILE_SIZE/4, TILE_SIZE/4,
+        TILE_SIZE - TILE_SIZE/4, TILE_SIZE/2,
+        TILE_SIZE/4, TILE_SIZE - TILE_SIZE/4) 
+
+        --TODO render the canvas to the screen
     
     self.currentMap:renderToCanvas()
 
@@ -37,8 +45,7 @@ function PlayState:init()
             self.player.velX = 0
             self.player.velY = 0
             self.player.fixture:getBody():setLinearVelocity(0, 0)
-            self.player.health = self.player.health - 20
-            self.player.healthBar:setValue(self.player.health)
+            self.player:takeDamage(20)
             self.player.beached = true
             gSounds['crash']:stop()
             gSounds['crash']:play()
@@ -96,6 +103,7 @@ function PlayState:render()
         ship:render()
         
     end
+    self:drawWindField()
 
     -- for k, fix in pairs(self.landFixtures) do
     --     love.graphics.rectangle('line', fix:getBody():getX(), fix:getBody():getY(),
@@ -189,4 +197,37 @@ function PlayState:addLandFixtures()
         end
     end
     return returnedFixtures
+end
+
+function PlayState:generateWindField()
+    local cells = {}
+    local frequency = math.random() 
+    for y = 1, WORLD_HEIGHT do
+        cells[y] = {}
+        for x = 1, WORLD_WIDTH do
+            --get the rotation of the "wind vector" in this cell
+            local rotation = love.math.noise(x * frequency, y * frequency) * math.pi * 2
+
+
+            cells[y][x] = {math.cos(rotation), math.sin(rotation)} -- this is a special case 
+            --that requires less math (a vector of (0, 1) is being rotated)
+        end
+    end
+
+    return cells
+end
+
+function PlayState:drawWindField()
+    
+    for y, tbl in pairs(self.windField) do
+        for x, cell in pairs(tbl) do
+            love.graphics.setColor(1, 0, 0, 1)
+            love.graphics.line((x-1) * TILE_SIZE + (TILE_SIZE / 4), (y-1) * TILE_SIZE + (TILE_SIZE/4),
+                x * TILE_SIZE, (y*TILE_SIZE) - TILE_SIZE/2,
+                (x-1) * TILE_SIZE + TILE_SIZE /4 , y * TILE_SIZE - TILE_SIZE / 4)
+
+        end
+    end
+            
+    
 end

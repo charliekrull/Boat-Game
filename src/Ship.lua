@@ -99,6 +99,21 @@ function Ship:render()
     --self.collisionRect:render()
 end
 
+function Ship:takeDamage(amount)
+    self.health = self.health - amount
+
+    if self.healthBar then
+        self.healthBar:setValue(self.health)
+    end
+
+    if self.health <= 0 then
+        --die
+
+    end
+
+    
+end
+
 function Ship:checkTileCollisionsUp()
     local tileTopLeft = self.tileMap:pointToTile(self.collisionRect.x, self.collisionRect.y)
     local tileTopRight = self.tileMap:pointToTile(
@@ -140,3 +155,4 @@ function Ship:checkTileCollisionsLeft()
         return (((tileTopLeft ~= nil) and (tileTopLeft.land)) or (tileBottomLeft ~= nil) and tileBottomLeft.land)
     
 end
+
