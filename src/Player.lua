@@ -14,7 +14,20 @@ function Player:init(world, def, x, y, userData)
             ['b'] = 0,
             ['a'] = 1}
     }
-    
+    self.sailDeployedBar = ProgressBar{
+        x = WINDOW_WIDTH - 4 - 24,
+        y = 6, 
+        width = 24,
+        height = WINDOW_HEIGHT/3,
+        max = 100,
+        value = self.sailDeployed,
+        color = {
+            ['r'] = 0,
+            ['g'] = 1,
+            ['b'] = 0,
+            ['a'] = 1
+        }
+    }
 end
 
 function Player:update(dt)
@@ -46,7 +59,7 @@ function Player:update(dt)
     end
     if love.keyboard.isDown('up') then
         self.body:applyForce(math.cos(self.rotation + math.pi/2) * self.strafeForce, 
-            math.sin(self.rotation + math.pi/2) * 10000)
+            math.sin(self.rotation + math.pi/2) * self.strafeForce)
     end
     if love.keyboard.isDown('right') then
         self.body:applyForce(math.cos(self.rotation + math.pi) * self.strafeForce,
@@ -56,6 +69,7 @@ function Player:update(dt)
         self.body:applyForce(math.cos(self.rotation) * self.strafeForce,
         math.sin(self.rotation) * self.strafeForce)
     end
+    self.sailDeployedBar:setValue(self.sailDeployed)
     
 
     

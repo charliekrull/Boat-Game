@@ -118,8 +118,8 @@ end
 
 function Ship:applyWind()
     self.body:applyForce(
-        math.cos(self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]) * self.sailDeployed * 300,
-        math.sin(self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]) * self.sailDeployed * 300
+        math.cos(self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]['rotation']) * self.sailDeployed  * self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]['magnitude'],
+        math.sin(self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]['rotation']) * self.sailDeployed  * self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]['magnitude'] 
     )
 end
 

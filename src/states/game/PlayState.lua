@@ -22,6 +22,9 @@ function PlayState:init()
         TILE_SIZE - TILE_SIZE/4, TILE_SIZE/2,
         TILE_SIZE/4, TILE_SIZE - TILE_SIZE/4) 
 
+    self.windicator = love.graphics.newCanvas(TILE_SIZE, TILE_SIZE)
+    
+
         
     
     self.currentMap:renderToCanvas()
@@ -105,6 +108,10 @@ function PlayState:update(dt)
             self.player.beached = false
         end
     end
+
+    if love.keyboard.wasPressed('f') then
+        print(self.currentMap.windField[math.floor(self.player.body:getY()/TILE_SIZE)][math.floor(self.player.body:getX()/TILE_SIZE)]['magnitude'])
+    end
    
 end
 
@@ -117,8 +124,10 @@ function PlayState:render()
         ship:render()
         
     end
+    --draw the wind direction arrows
     self:drawWindField()
 
+    -- outline land fixtures, for debugging
     -- for k, fix in pairs(self.landFixtures) do
     --     love.graphics.rectangle('line', fix:getBody():getX(), fix:getBody():getY(),
     --     TILE_SIZE, TILE_SIZE)
@@ -128,9 +137,11 @@ function PlayState:render()
     local playerSpeed = math.sqrt(x^2 + y^2)
     love.graphics.pop()
     self.player.healthBar:render()
-    love.graphics.setColor(0, 0, 0, 1) --black
-    love.graphics.print('sailDeployed: '..self.player.sailDeployed, 4, WINDOW_HEIGHT - 64)
-    love.graphics.print('vel: '..math.floor(playerSpeed), 4, WINDOW_HEIGHT - 44)
+    self.player.sailDeployedBar:render()
+    self:drawWindicator()
+    --love.graphics.setColor(0, 0, 0, 1) --black
+    
+    --love.graphics.print('vel: '..math.floor(playerSpeed), 4, WINDOW_HEIGHT - 44)
     
     love.graphics.setColor(1, 1, 1, 1)
     
@@ -225,9 +236,10 @@ function PlayState:generateWindField()
         for x = 1, WORLD_WIDTH do
             --get the rotation of the "wind vector" in this cell
             local rotation = love.math.noise(x  * frequency, y  * frequency) * math.pi * 2
-            --TODO add intensity
+            local magnitude = love.math.noise(x/2 * frequency, y/2 * frequency) * 300
 
-            cells[y][x] = rotation
+            cells[y][x] = {['rotation'] = rotation,
+                ['magnitude'] = magnitude}
         end
     end
 
@@ -241,10 +253,29 @@ function PlayState:drawWindField()
             love.graphics.setColor(1, 0, 0, 1)
             --draw the wind arrow canvas, rotate appropriately
             love.graphics.draw(self.windDirCanvas, (x-1) * TILE_SIZE,
-            (y-1) * TILE_SIZE, self.currentMap.windField[y][x], 1, 1, TILE_SIZE/2, TILE_SIZE/2)
+            (y-1) * TILE_SIZE, self.currentMap.windField[y][x]['rotation'], 
+            self.currentMap.windField[y][x]['magnitude'] / 300, self.currentMap.windField[y][x]['magnitude'] / 300,
+             TILE_SIZE/2, TILE_SIZE/2)
 
         end
     end
             
+    
+end
+
+function PlayState:drawWindicator()
+    local currentWindCellRotation = self.currentMap.windField[math.floor(self.player.body:getY()/TILE_SIZE)][math.floor(self.player.body:getX()/TILE_SIZE)]['rotation']
+    local currentWindCellMagnitude = self.currentMap.windField[math.floor(self.player.body:getY()/TILE_SIZE)][math.floor(self.player.body:getX()/TILE_SIZE)]['magnitude']
+    love.graphics.setCanvas(self.windicator)
+    love.graphics.clear(0, 0, 0, 0) --clear to transparency
+    love.graphics.setColor(0, 1, 0, 1)
+    love.graphics.polygon('fill', 0, self.windicator:getPixelHeight()/2.5,
+        map(0, 1, 5, 64, currentWindCellMagnitude/300), self.windicator:getPixelHeight()/2,
+        0, self.windicator:getPixelHeight() * 0.6)
+    
+    love.graphics.setCanvas()
+    love.graphics.draw(self.windicator, TILE_SIZE, WINDOW_HEIGHT - TILE_SIZE,
+    currentWindCellRotation, 1, 1, map(0, 300, 5, TILE_SIZE, currentWindCellMagnitude/300), TILE_SIZE/2)
+
     
 end

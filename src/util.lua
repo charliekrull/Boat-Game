@@ -75,3 +75,9 @@ function print_r ( t )
     end
     print()
 end
+
+function map(inputStart, inputEnd, outputStart, outPutEnd, value)
+    return outputStart + ((outPutEnd-outputStart)/(inputEnd-inputStart)) * (value - inputStart)   
+
+end
+
