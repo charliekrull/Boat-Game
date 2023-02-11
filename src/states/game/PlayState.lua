@@ -15,14 +15,14 @@ function PlayState:init()
 
     self.currentMap:getAutoTileValues()
     self.currentMap:applyAutoTile()
-    self.windField = self:generateWindField()
+    self.currentMap.windField = self:generateWindField()
     self.windDirCanvas = love.graphics.newCanvas(TILE_SIZE, TILE_SIZE)
     love.graphics.setCanvas(self.windDirCanvas)
     love.graphics.line(TILE_SIZE/4, TILE_SIZE/4,
         TILE_SIZE - TILE_SIZE/4, TILE_SIZE/2,
         TILE_SIZE/4, TILE_SIZE - TILE_SIZE/4) 
 
-        --TODO render the canvas to the screen
+        
     
     self.currentMap:renderToCanvas()
 
@@ -70,6 +70,9 @@ function PlayState:init()
 
     self.player = Player(self.world, SHIPS['player'], 10 * TILE_SIZE, 10 * TILE_SIZE, 'Player')
     table.insert(self.ships, self.player)
+    for k, ship in pairs(self.ships) do
+        ship.tileMap = self.currentMap
+    end
     
 end
 
@@ -109,12 +112,15 @@ function PlayState:render()
     --     love.graphics.rectangle('line', fix:getBody():getX(), fix:getBody():getY(),
     --     TILE_SIZE, TILE_SIZE)
     -- end
+
+    local x, y = self.player.body:getLinearVelocity()
+    local playerSpeed = math.sqrt(x^2 + y^2)
     love.graphics.pop()
     self.player.healthBar:render()
     love.graphics.setColor(0, 0, 0, 1) --black
     love.graphics.print('sailDeployed: '..self.player.sailDeployed, 4, WINDOW_HEIGHT - 64)
-    love.graphics.print('velX: '..math.floor(self.player.velX), 4, WINDOW_HEIGHT - 44)
-    love.graphics.print('velY: '..math.floor(self.player.velY), 4, WINDOW_HEIGHT - 24)
+    love.graphics.print('vel: '..math.floor(playerSpeed), 4, WINDOW_HEIGHT - 44)
+    
     love.graphics.setColor(1, 1, 1, 1)
     
 end
@@ -201,16 +207,15 @@ end
 
 function PlayState:generateWindField()
     local cells = {}
-    local frequency = math.random() 
+    local frequency = math.random()/20
     for y = 1, WORLD_HEIGHT do
         cells[y] = {}
         for x = 1, WORLD_WIDTH do
             --get the rotation of the "wind vector" in this cell
-            local rotation = love.math.noise(x * frequency, y * frequency) * math.pi * 2
+            local rotation = love.math.noise(x  * frequency, y  * frequency) * math.pi * 2
 
 
-            cells[y][x] = {math.cos(rotation), math.sin(rotation)} -- this is a special case 
-            --that requires less math (a vector of (0, 1) is being rotated)
+            cells[y][x] = rotation
         end
     end
 
@@ -219,12 +224,12 @@ end
 
 function PlayState:drawWindField()
     
-    for y, tbl in pairs(self.windField) do
+    for y, tbl in pairs(self.currentMap.windField) do
         for x, cell in pairs(tbl) do
             love.graphics.setColor(1, 0, 0, 1)
-            love.graphics.line((x-1) * TILE_SIZE + (TILE_SIZE / 4), (y-1) * TILE_SIZE + (TILE_SIZE/4),
-                x * TILE_SIZE, (y*TILE_SIZE) - TILE_SIZE/2,
-                (x-1) * TILE_SIZE + TILE_SIZE /4 , y * TILE_SIZE - TILE_SIZE / 4)
+            --draw the wind arrow canvas, rotate appropriately
+            love.graphics.draw(self.windDirCanvas, (x-1) * TILE_SIZE,
+            (y-1) * TILE_SIZE, self.currentMap.windField[y][x], 1, 1, TILE_SIZE/2, TILE_SIZE/2)
 
         end
     end

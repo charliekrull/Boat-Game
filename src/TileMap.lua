@@ -5,6 +5,7 @@ function TileMap:init(def)
     self.height = def.height
     self.layers = def.layers
     self.tiles = {}
+    self.windField = {}
     self.canvas = love.graphics.newCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE)
 end
 

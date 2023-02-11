@@ -65,6 +65,7 @@ function Ship:update(dt)
     end
     --update position based on speed
     self.fixture:getBody():setLinearVelocity(self.velX, self.velY)
+    self:applyWind()
     self.x = self.body:getX() 
     self.y = self.body:getY()
     self.rotation = self.body:getAngle()
@@ -112,6 +113,13 @@ function Ship:takeDamage(amount)
     end
 
     
+end
+
+function Ship:applyWind()
+    self.body:applyForce(
+        math.cos(self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]) * self.sailDeployed * 300,
+        math.sin(self.tileMap.windField[math.floor(self.body:getY()/ TILE_SIZE)][math.floor(self.body:getX()/ TILE_SIZE)]) * self.sailDeployed * 300
+    )
 end
 
 function Ship:checkTileCollisionsUp()

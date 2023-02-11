@@ -79,3 +79,7 @@ end
 function Player:takeDamage(amount)
     Ship.takeDamage(self, amount)
 end
+
+function Player:applyWind()
+    Ship.applyWind(self)
+end
