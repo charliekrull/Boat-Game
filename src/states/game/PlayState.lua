@@ -25,10 +25,6 @@ function PlayState:init()
         
     
     self.currentMap:renderToCanvas()
-
-    --self.player.tileMap = self.currentMap
-
-    
     
     --physics world
     self.world = love.physics.newWorld(0, 0, WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE)
@@ -67,8 +63,23 @@ function PlayState:init()
     self.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
     self.landFixtures = self:addLandFixtures()
     
+    --place the player so we're not on land
+    local waterTiles = {}
+    for z, layer in pairs(self.currentMap.tiles) do
+        for y, row in pairs(layer) do
+            for x, cell in pairs(row) do
+                if self.currentMap:getTopTile(x, y).frame == 73 then
+                    waterTiles[#waterTiles+1] = cell
 
-    self.player = Player(self.world, SHIPS['player'], 10 * TILE_SIZE, 10 * TILE_SIZE, 'Player')
+                end
+            end
+        end
+    end
+    
+    local chosenTile = table.randomChoice(waterTiles)
+    print(chosenTile)
+
+    self.player = Player(self.world, SHIPS['player'],( chosenTile.x -1 )* TILE_SIZE, (chosenTile.y - 1) * TILE_SIZE, 'Player')
     table.insert(self.ships, self.player)
     for k, ship in pairs(self.ships) do
         ship.tileMap = self.currentMap
