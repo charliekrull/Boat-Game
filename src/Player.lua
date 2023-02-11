@@ -83,3 +83,7 @@ end
 function Player:applyWind()
     Ship.applyWind(self)
 end
+
+function Player:die()
+    gStateMachine:change('start')
+end

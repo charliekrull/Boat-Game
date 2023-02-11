@@ -109,6 +109,7 @@ function Ship:takeDamage(amount)
 
     if self.health <= 0 then
         --die
+        self:die()
 
     end
 
@@ -164,3 +165,7 @@ function Ship:checkTileCollisionsLeft()
     
 end
 
+
+function Ship:die()
+
+end

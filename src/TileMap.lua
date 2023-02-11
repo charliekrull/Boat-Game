@@ -129,9 +129,7 @@ function TileMap:getTopTile(x, y)
         if self.tiles[z] then
             if self.tiles[z][y] then
                 if self.tiles[z][y][x] then    
-            
-
-        
+                          
                     return self.tiles[z][y][x]
 
                 end

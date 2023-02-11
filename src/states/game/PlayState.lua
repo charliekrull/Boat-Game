@@ -77,7 +77,7 @@ function PlayState:init()
     end
     
     local chosenTile = table.randomChoice(waterTiles)
-    print(chosenTile)
+    
 
     self.player = Player(self.world, SHIPS['player'],( chosenTile.x -1 )* TILE_SIZE, (chosenTile.y - 1) * TILE_SIZE, 'Player')
     table.insert(self.ships, self.player)
@@ -173,7 +173,7 @@ function PlayState:generateWorld(width, height, layers)
                     local roll = love.math.noise(((x/width) - 0.5) * frequency, 
                         ((y/height) - 0.5) * frequency) * amplitude
 
-                    if roll >= 0.85 then
+                    if roll >= 0.85 or x == 1 or x == WORLD_WIDTH or y == 1 or y == WORLD_WIDTH then
                         
                         local t = Tile{
                             x = x,
@@ -202,6 +202,7 @@ function PlayState:addLandFixtures()
             for i = 1, #LAND_TILE_VALUES do
                 if LAND_TILE_VALUES[i] == id then
                     isLand = true
+                    break
                 end
             end
             if isLand then
@@ -224,7 +225,7 @@ function PlayState:generateWindField()
         for x = 1, WORLD_WIDTH do
             --get the rotation of the "wind vector" in this cell
             local rotation = love.math.noise(x  * frequency, y  * frequency) * math.pi * 2
-
+            --TODO add intensity
 
             cells[y][x] = rotation
         end

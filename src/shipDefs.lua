@@ -8,7 +8,7 @@ SHIPS = {
         sailDeploySpeed = 50,
         mass = 3000,
         inertia = 3000,
-        steerForce = 1000,
+        steerForce = 3000,
         strafeForce = 10000,
         maxHealth = 100
     }
