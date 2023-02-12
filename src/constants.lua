@@ -7,5 +7,11 @@ WORLD_WIDTH = 100 --tiles
 WORLD_HEIGHT = 100 --tiles
 
 LAND_TILE_VALUES = {
-    1, 2, 3, 17, 18, 19, 33, 34, 35, 68, 69
+    1, 2, 3, 17, 18, 19, 23, 24, 33, 34, 35, 39, 40, 68, 69
+}
+
+GRASS_TILE_VALUES = {
+    23, 24,
+    39, 40
+
 }

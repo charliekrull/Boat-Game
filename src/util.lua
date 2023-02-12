@@ -18,6 +18,18 @@ function table.randomChoice(tbl) --returns single random element in tbl
     
 end
 
+--check if a table contains a certain element
+
+function table.contains(tbl, element)
+    for k, content in pairs(tbl) do
+        if content == element then
+            return true
+        end
+    end
+
+    return false
+end
+
 --gets individual images from a spritesheet/tilesheet
 function GenerateQuads(atlas, tilewidth, tileheight)
     local sheetWidth = atlas:getWidth() / tilewidth

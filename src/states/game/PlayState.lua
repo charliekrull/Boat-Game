@@ -80,6 +80,7 @@ function PlayState:init()
     end
     
     local chosenTile = table.randomChoice(waterTiles)
+
     
 
     self.player = Player(self.world, SHIPS['player'],( chosenTile.x -1 )* TILE_SIZE, (chosenTile.y - 1) * TILE_SIZE, 'Player')
@@ -93,6 +94,18 @@ end
 function PlayState:update(dt) 
     if love.keyboard.wasPressed('escape') then
         love.event.quit()
+    end
+
+    for k, click in pairs(love.mouse.buttonsPressed()) do
+        if click.button == 1 then
+            local clickedTile = self.currentMap:pointToTile(click.x+ self.camX, click.y + self.camY)
+            if clickedTile and clickedTile.autoTileFrame then
+                print(clickedTile.autoTileFrame)
+            else
+                print(nil)
+            end
+
+        end
     end
     
     for k, ship in pairs(self.ships) do
@@ -184,7 +197,7 @@ function PlayState:generateWorld(width, height, layers)
                     local roll = love.math.noise(((x/width) - 0.5) * frequency, 
                         ((y/height) - 0.5) * frequency) * amplitude
 
-                    if roll >= 0.85 or x == 1 or x == WORLD_WIDTH or y == 1 or y == WORLD_WIDTH then
+                    if (roll >= 0.85 and roll <= 0.95) or x == 1 or x == WORLD_WIDTH or y == 1 or y == WORLD_HEIGHT then
                         
                         local t = Tile{
                             x = x,
@@ -193,7 +206,18 @@ function PlayState:generateWorld(width, height, layers)
                             frame = 18,
                             land = true
                         }
+                        
 
+                        returnedTiles[z][y][x] = t
+
+                    elseif roll > 0.95 then
+                        local t = Tile{
+                            x = x,
+                            y = y,
+                            texture = 'tilesheet',
+                            frame = 23,
+                            land = true
+                        }    
                         returnedTiles[z][y][x] = t
                     end
                 end

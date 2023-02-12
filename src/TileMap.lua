@@ -49,54 +49,92 @@ function TileMap:getAutoTileValues()
                 ['E'] = false,
                 ['S'] = false,
                 ['W'] = false}
+
+            local surroundingGrass = {['N'] = false,
+                ['E'] = false,
+                ['S'] = false,
+                ['W'] = false}
             --print_r(self:getTopTile(x, y))
-            if self:getTopTile(x, y).frame == 18 then
+            if table.contains(LAND_TILE_VALUES, self:getTopTile(x, y).frame) then
                 --check the tile on each side:
                 --North
-                if self:getTopTile(x, y-1) and self:getTopTile(x, y - 1).frame == 18 then
+                local tile = self:getTopTile(x, y-1)
+                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
                     surroundingLand['N'] = true
+                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
+                        surroundingGrass['N'] = true
+                    end
+                    
                 end
 
                 
 
                 --East
-                if self:getTopTile(x+1, y) and self:getTopTile(x + 1, y).frame == 18 then
+                tile = self:getTopTile(x+1, y)
+                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
                     surroundingLand['E'] = true
+                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
+                        surroundingGrass['E'] = true
+                    end
                 end
 
                 --South
-
-               if self:getTopTile(x, y+1) and self:getTopTile(x, y + 1).frame == 18 then
+                tile = self:getTopTile(x, y+1)
+                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
                 
                     surroundingLand['S'] = true
-               end
+                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
+                        surroundingGrass['S'] = true
+                    end
+                end
 
                 --West
-               if self:getTopTile(x-1, y) and self:getTopTile(x-1, y).frame == 18 then
+                tile = self:getTopTile(x-1, y)
+                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
                     surroundingLand['W'] = true
-               end
+                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
+                        surroundingGrass['W'] = true
+                    end
+                end
             end
             
             local autoTileFrame = 0  
             
             if surroundingLand['N'] then
                 autoTileFrame = autoTileFrame + 1
+        
             end 
 
             if surroundingLand['E'] then
                 autoTileFrame = autoTileFrame + 2
+                
             end
 
             if surroundingLand['S'] then
                 autoTileFrame = autoTileFrame + 4
+                
             end
 
             if surroundingLand['W'] then
                 autoTileFrame = autoTileFrame + 8
+                
             end
+            local hasGrass = false
+            if surroundingGrass['N'] or surroundingGrass['E'] or 
+                surroundingGrass['S'] or surroundingGrass['W'] then
+                
+                hasGrass = true
+            end
+
+            if hasGrass then
+                autoTileFrame = autoTileFrame + 16
+            end
+
+
 
             self:getTopTile(x, y).autoTileFrame = autoTileFrame
             self:getTopTile(x, y).surroundingLand = surroundingLand
+            self:getTopTile(x, y).surroundingGrass = surroundingGrass
 
             
             end
