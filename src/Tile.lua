@@ -7,6 +7,7 @@ function Tile:init(def)
     self.frame = def.frame
     self.land = def.land
     self.autoTileFrame = self.frame
+    self.id = self.frame
     self.surroundingLand = {}
     self.width = TILE_SIZE
     self.height = TILE_SIZE
@@ -22,3 +23,7 @@ function Tile:render()
         (self.x - 1) * TILE_SIZE, (self.y - 1) * TILE_SIZE)
 end
 
+function Tile:isCoast()
+    return not self.surroundingLand['N'] or not self.surroundingLand['E'] or
+         not self.surroundingLand['S'] or not self.surroundingLand['W']
+end

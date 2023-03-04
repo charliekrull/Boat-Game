@@ -1,17 +1,24 @@
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
-TILE_SIZE = 64
+VIRTUAL_WIDTH = 576
+VIRTUAL_HEIGHT = 324
+TILE_SIZE = 16
 
 WORLD_WIDTH = 100 --tiles
 WORLD_HEIGHT = 100 --tiles
 
-LAND_TILE_VALUES = {
-    1, 2, 3, 17, 18, 19, 23, 24, 33, 34, 35, 39, 40, 68, 69
+SETTLEMENT_TYPES = {
+    ['house'] = {width = 1, height = 1, tiles =  {15, 16, 17, 41, 42, 43}},
+    ['hamlet'] = {width = 2, height = 2, startTile = 18},
+    ['village'] = {width = 3, height = 2, startTile = 21},
+    ['town'] = {width = 3, height = 2, startTile = 24},
+    ['city'] = {width = 3, height = 3, startTile = 67},
+    ['walled-city'] = {width = 3, height = 3, startTile = 70},
+    ['castle1'] = {width = 3, height = 3, startTile = 73},
+    ['castle2'] = {width = 3, height = 3, startTile = 76}
 }
 
-GRASS_TILE_VALUES = {
-    23, 24,
-    39, 40
-
-}
+--tile id's
+WATER_ID = 626
+GRASS_ID = 80

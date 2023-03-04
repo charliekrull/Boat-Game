@@ -7,9 +7,10 @@ require 'src/Dependencies'
 --runs once when the game starts
 function love.load()
 
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
-        resizable = true
-    })
+    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
+    {fullscreen = false,
+    resizable = true,   
+    vsync = true})
 
     love.window.setTitle('Game Title')
  
@@ -18,8 +19,8 @@ function love.load()
     love.graphics.setDefaultFilter('linear', 'linear')
 
     gFonts = {
-        ['title'] = love.graphics.newFont('fonts/Antique Quest St.ttf', 64),
-        ['ui'] = love.graphics.newFont('fonts/CalligraphyFLF.ttf', 32)
+        ['title'] = love.graphics.newFont('fonts/Antique Quest St.ttf', 32),
+        ['ui'] = love.graphics.newFont('fonts/CalligraphyFLF.ttf', 16)
     }
 
     gStateMachine = StateMachine{
@@ -54,6 +55,10 @@ function love.mouse.buttonsPressed()
     
 end
 
+function love.resize(w, h)
+    push:resize(w,h)
+end
+
 
 
 --called every frame
@@ -65,10 +70,11 @@ function love.update(dt)
     love.mouse.clicks = {}
 end
 
-function love.draw() 
+function love.draw()
+    push:apply('start') 
 
     
     gStateMachine:render()
     
-
+    push:apply('end')
 end

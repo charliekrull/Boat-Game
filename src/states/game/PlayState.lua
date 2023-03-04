@@ -9,12 +9,12 @@ function PlayState:init()
     self.currentMap = TileMap{
         width = WORLD_WIDTH,
         height = WORLD_HEIGHT,
-        layers = 2 
+        layers = 3 
     }
     self.currentMap.tiles = self:generateWorld(self.currentMap.width, self.currentMap.height, self.currentMap.layers)
 
-    self.currentMap:getAutoTileValues()
-    self.currentMap:applyAutoTile()
+    --self.currentMap:getAutoTileValues()
+    --self.currentMap:applyAutoTile()
     self.currentMap.windField = self:generateWindField()
     self.windDirCanvas = love.graphics.newCanvas(TILE_SIZE, TILE_SIZE)
     love.graphics.setCanvas(self.windDirCanvas)
@@ -38,7 +38,7 @@ function PlayState:init()
         types[a:getUserData()] = true
         types[b:getUserData()] = true
 
-        if types['Player'] and types['Land'] then
+        if types['Player'] and (not self.player.beached) and types['Land'] then
             local playerFixture = a:getUserData() == 'Player' and a or b
             local landFixture = a:getUserData() == 'Land' and a or b
             self.player.velX = 0
@@ -64,6 +64,8 @@ function PlayState:init()
     end
 
     self.world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+    
+    
     self.landFixtures = self:addLandFixtures()
     
     --place the player so we're not on land
@@ -71,7 +73,7 @@ function PlayState:init()
     for z, layer in pairs(self.currentMap.tiles) do
         for y, row in pairs(layer) do
             for x, cell in pairs(row) do
-                if self.currentMap:getTopTile(x, y).frame == 73 then
+                if self.currentMap:getTopTile(x, y).frame == WATER_ID then
                     waterTiles[#waterTiles+1] = cell
 
                 end
@@ -116,7 +118,7 @@ function PlayState:update(dt)
 
     self:updateCamera()
 
-    if love.keyboard.wasPressed('b') then
+    if love.keyboard.wasPressed('space') then
         if self.player.beached then
             self.player.beached = false
         end
@@ -137,6 +139,7 @@ function PlayState:render()
         ship:render()
         
     end
+    
     --draw the wind direction arrows
     self:drawWindField()
 
@@ -152,9 +155,12 @@ function PlayState:render()
     self.player.healthBar:render()
     self.player.sailDeployedBar:render()
     self:drawWindicator()
+    love.graphics.setColor(0, 0, 0, 1)
+    
+    love.graphics.print('Ship Coords: '..math.floor(self.player.x/TILE_SIZE)..' , '..math.floor(self.player.y/TILE_SIZE), VIRTUAL_WIDTH - 60, VIRTUAL_HEIGHT - 10)
     --love.graphics.setColor(0, 0, 0, 1) --black
     
-    --love.graphics.print('vel: '..math.floor(playerSpeed), 4, WINDOW_HEIGHT - 44)
+    --love.graphics.print('vel: '..math.floor(playerSpeed), 4, VIRTUAL_HEIGHT - 10)
     
     love.graphics.setColor(1, 1, 1, 1)
     
@@ -162,11 +168,11 @@ end
 
 function PlayState:updateCamera()
     local centerOfMassX, centerOfMassY = self.player.body:getWorldCenter()
-    self.camX = math.max(0, math.min(TILE_SIZE * self.currentMap.width - WINDOW_WIDTH,
-        centerOfMassX - (WINDOW_WIDTH / 2 - (TILE_SIZE/2))))
+    self.camX = math.max(0, math.min(TILE_SIZE * self.currentMap.width - VIRTUAL_WIDTH,
+        centerOfMassX - (VIRTUAL_WIDTH / 2 - (TILE_SIZE/2))))
 
-    self.camY = math.max(0, math.min(TILE_SIZE * self.currentMap.height - WINDOW_HEIGHT,
-        centerOfMassY - (WINDOW_HEIGHT / 2 - (TILE_SIZE/2))))
+    self.camY = math.max(0, math.min(TILE_SIZE * self.currentMap.height - VIRTUAL_HEIGHT,
+        centerOfMassY - (VIRTUAL_HEIGHT / 2 - (TILE_SIZE/2))))
 end
 
 function PlayState:generateWorld(width, height, layers)
@@ -186,8 +192,8 @@ function PlayState:generateWorld(width, height, layers)
                     local t = Tile{
                         x = x,
                         y = y,
-                        texture = 'tilesheet',
-                        frame = 73,
+                        texture = 'overworld',
+                        frame = WATER_ID, --just water
                         land = false
                     }
                     returnedTiles[z][y][x] = t
@@ -197,29 +203,21 @@ function PlayState:generateWorld(width, height, layers)
                     local roll = love.math.noise(((x/width) - 0.5) * frequency, 
                         ((y/height) - 0.5) * frequency) * amplitude
 
-                    if (roll >= 0.85 and roll <= 0.95) or x == 1 or x == WORLD_WIDTH or y == 1 or y == WORLD_HEIGHT then
+                    if roll >= 0.85 or x == 1 or x == WORLD_WIDTH or y == 1 or y == WORLD_HEIGHT then
                         
                         local t = Tile{
                             x = x,
                             y = y,
-                            texture = 'tilesheet',
-                            frame = 18,
+                            texture = 'overworld',
+                            frame = GRASS_ID,
                             land = true
                         }
                         
 
                         returnedTiles[z][y][x] = t
 
-                    elseif roll > 0.95 then
-                        local t = Tile{
-                            x = x,
-                            y = y,
-                            texture = 'tilesheet',
-                            frame = 23,
-                            land = true
-                        }    
-                        returnedTiles[z][y][x] = t
-                    end
+                    
+                    end                    
                 end
             end
         end
@@ -233,16 +231,10 @@ function PlayState:addLandFixtures()
     for y = 1, WORLD_HEIGHT do
         for x = 1, WORLD_WIDTH do
             local id = self.currentMap:getTopTile(x, y).frame
-            local isLand = false --assume it's water to start
-            for i = 1, #LAND_TILE_VALUES do
-                if LAND_TILE_VALUES[i] == id then
-                    isLand = true
-                    break
-                end
-            end
-            if isLand then
+            
+            if id == GRASS_ID then
                 local bod = love.physics.newBody(self.world, (x-1) * TILE_SIZE, (y - 1) * TILE_SIZE, 'static')
-                local shape = love.physics.newRectangleShape(32, 32, TILE_SIZE, TILE_SIZE)
+                local shape = love.physics.newRectangleShape(TILE_SIZE/2, TILE_SIZE/2, TILE_SIZE, TILE_SIZE)
                 local fix = love.physics.newFixture(bod, shape)
                 fix:setUserData('Land')
                 table.insert(returnedFixtures, fix)
@@ -260,7 +252,7 @@ function PlayState:generateWindField()
         for x = 1, WORLD_WIDTH do
             --get the rotation of the "wind vector" in this cell
             local rotation = love.math.noise(x  * frequency, y  * frequency) * math.pi * 2
-            local magnitude = love.math.noise(x/2 * frequency, y/2 * frequency) * 300
+            local magnitude = love.math.noise(x/2 * frequency, y/2 * frequency) * 10
 
             cells[y][x] = {['rotation'] = rotation,
                 ['magnitude'] = magnitude}
@@ -278,7 +270,7 @@ function PlayState:drawWindField()
             --draw the wind arrow canvas, rotate appropriately
             love.graphics.draw(self.windDirCanvas, (x-1) * TILE_SIZE,
             (y-1) * TILE_SIZE, self.currentMap.windField[y][x]['rotation'], 
-            self.currentMap.windField[y][x]['magnitude'] / 300, self.currentMap.windField[y][x]['magnitude'] / 300,
+            self.currentMap.windField[y][x]['magnitude']/10, self.currentMap.windField[y][x]['magnitude'] / 10,
              TILE_SIZE/2, TILE_SIZE/2)
 
         end
@@ -294,12 +286,13 @@ function PlayState:drawWindicator()
     love.graphics.clear(0, 0, 0, 0) --clear to transparency
     love.graphics.setColor(0, 1, 0, 1)
     love.graphics.polygon('fill', 0, self.windicator:getPixelHeight()/2.5,
-        map(0, 1, 5, 64, currentWindCellMagnitude/300), self.windicator:getPixelHeight()/2,
+        map(0, 1, 5, 64, currentWindCellMagnitude/10), self.windicator:getPixelHeight()/2,
         0, self.windicator:getPixelHeight() * 0.6)
     
     love.graphics.setCanvas()
-    love.graphics.draw(self.windicator, TILE_SIZE, WINDOW_HEIGHT - TILE_SIZE,
-    currentWindCellRotation, 1, 1, map(0, 300, 5, TILE_SIZE, currentWindCellMagnitude/300), TILE_SIZE/2)
+    love.graphics.draw(self.windicator, TILE_SIZE, VIRTUAL_HEIGHT - TILE_SIZE*4,
+    currentWindCellRotation, 1, 1, map(0, 300, 5, TILE_SIZE, currentWindCellMagnitude/10), TILE_SIZE/2)
 
     
 end
+

@@ -3,10 +3,10 @@ Player = Class{__includes = Ship}
 function Player:init(world, def, x, y, userData)
     Ship.init(self, world, def, x, y, userData)
     self.healthBar = ProgressBar{
-        x = 4,
-        y = 6,
-        width = 24,
-        height = WINDOW_HEIGHT / 3,
+        x = 2,
+        y = 2,
+        width = 12,
+        height = VIRTUAL_HEIGHT / 3,
         max = self.maxHealth,
         value = self.health,
         color = {['r'] = 1,
@@ -15,10 +15,10 @@ function Player:init(world, def, x, y, userData)
             ['a'] = 1}
     }
     self.sailDeployedBar = ProgressBar{
-        x = WINDOW_WIDTH - 4 - 24,
-        y = 6, 
-        width = 24,
-        height = WINDOW_HEIGHT/3,
+        x = VIRTUAL_WIDTH - 2 - 12,
+        y = 2, 
+        width = 12,
+        height = VIRTUAL_HEIGHT/3,
         max = 100,
         value = self.sailDeployed,
         color = {
@@ -88,6 +88,9 @@ end
 
 function Player:render()
     Ship.render(self)
+
+    --draw the collision shape
+    --love.graphics.polygon('line', self.body:getWorldPoints(self.shape:getPoints()))
 end
 
 function Player:takeDamage(amount)

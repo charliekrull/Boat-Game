@@ -7,6 +7,7 @@ function TileMap:init(def)
     self.tiles = {}
     self.windField = {}
     self.canvas = love.graphics.newCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE)
+
 end
 
 function TileMap:update(dt)
@@ -28,6 +29,7 @@ function TileMap:renderToCanvas()
 end
 
 function TileMap:render()
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.canvas, 0, 0)
 end
 
@@ -176,4 +178,6 @@ function TileMap:getTopTile(x, y)
     end
     
     
-end 
+end
+
+

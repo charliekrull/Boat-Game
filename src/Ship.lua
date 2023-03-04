@@ -26,19 +26,24 @@ function Ship:init(world, def, x, y, userData)
 
     self.body = love.physics.newBody(self.world, x - self.width / 2, y - self.height / 2,
         'dynamic')
+    
     self.body:setMass(def.mass)
     self.body:setInertia(def.inertia)
     self.body:setAngularDamping(0.75)
 
-    self.shape = love.physics.newPolygonShape(6, 6, 
-        self.width - 5, 6, 
-        20, self.height - 12, 
-        self.width - 19, self.height - 12,
-        self.width/2, self.height
+    self.shape = love.physics.newPolygonShape(4, 2,
+        4, self.height - 6,
+        self.width/2, self.height - 2,
+        self.width - 4, self.height - 6,
+        self.width - 4, 2
+         
+        
+         
     )
     
+    
     self.fixture = love.physics.newFixture(self.body, self.shape)
-
+    
    
     
 
@@ -90,7 +95,7 @@ end
 
 function Ship:render()
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(self.image, self.x, self.y, self.rotation)
+    love.graphics.draw(self.image, self.x, self.y, self.rotation, 0.25, 0.25)
     --love.graphics.setColor(1, 0, 0, 1)
     -- love.graphics.polygon('line', self.fixture:getBody():getWorldPoints(
     --         self.fixture:getShape():getPoints())

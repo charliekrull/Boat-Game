@@ -20,7 +20,7 @@ function StartState:render()
     
     love.graphics.setFont(gFonts['title'])
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.printf('Placeholder', 0, WINDOW_HEIGHT/2 - 30, WINDOW_WIDTH, 'center')
+    love.graphics.printf('Placeholder', 0, VIRTUAL_HEIGHT/2 - 16, VIRTUAL_WIDTH, 'center')
     love.graphics.setFont(gFonts['ui'])
-    love.graphics.printf('Press Enter to Start', 0, WINDOW_HEIGHT/2 + 80, WINDOW_WIDTH, 'center')
+    love.graphics.printf('Press Enter to Start', 0, VIRTUAL_HEIGHT/2 + 48, VIRTUAL_WIDTH, 'center')
 end
