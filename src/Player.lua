@@ -28,6 +28,9 @@ function Player:init(world, def, x, y, userData)
             ['a'] = 1
         }
     }
+    self.windicator = Windicator{x = TILE_SIZE + 2, y = VIRTUAL_HEIGHT - TILE_SIZE - 2,
+    size = 16, color = {0, 1, 0, 1}, player = self
+    }
 end
 
 function Player:update(dt)

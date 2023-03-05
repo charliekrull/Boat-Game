@@ -22,7 +22,7 @@ function PlayState:init()
         TILE_SIZE - TILE_SIZE/4, TILE_SIZE/2,
         TILE_SIZE/4, TILE_SIZE - TILE_SIZE/4) 
 
-    self.windicator = love.graphics.newCanvas(TILE_SIZE, TILE_SIZE)
+    self.windicator = love.graphics.newCanvas(64, 64)
     
 
         
@@ -117,6 +117,7 @@ function PlayState:update(dt)
     self.world:update(dt)
 
     self:updateCamera()
+    self.player.windicator:update(dt)
 
     if love.keyboard.wasPressed('space') then
         if self.player.beached then
@@ -126,6 +127,11 @@ function PlayState:update(dt)
 
     if love.keyboard.wasPressed('f') then
         print(self.currentMap.windField[math.floor(self.player.body:getY()/TILE_SIZE)][math.floor(self.player.body:getX()/TILE_SIZE)]['magnitude'])
+    end
+
+
+    if love.keyboard.wasPressed('c') then
+        print(map(0, 1, 5, 64, self.currentMap.windField[math.floor(self.player.body:getY()/TILE_SIZE)][math.floor(self.player.body:getX()/TILE_SIZE)]['magnitude']/10))
     end
    
 end
@@ -154,15 +160,19 @@ function PlayState:render()
     love.graphics.pop()
     self.player.healthBar:render()
     self.player.sailDeployedBar:render()
-    self:drawWindicator()
+    self.player.windicator:render()
+    
+    love.graphics.setColor(1, 1, 1, 1)
+    
     love.graphics.setColor(0, 0, 0, 1)
     
-    love.graphics.print('Ship Coords: '..math.floor(self.player.x/TILE_SIZE)..' , '..math.floor(self.player.y/TILE_SIZE), VIRTUAL_WIDTH - 60, VIRTUAL_HEIGHT - 10)
+    love.graphics.print('Ship Coords: '..math.floor(self.player.x/TILE_SIZE)..' , '..math.floor(self.player.y/TILE_SIZE), VIRTUAL_WIDTH - 128, VIRTUAL_HEIGHT - 18)
     --love.graphics.setColor(0, 0, 0, 1) --black
     
     --love.graphics.print('vel: '..math.floor(playerSpeed), 4, VIRTUAL_HEIGHT - 10)
     
     love.graphics.setColor(1, 1, 1, 1)
+
     
 end
 
