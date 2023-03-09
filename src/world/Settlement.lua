@@ -4,13 +4,11 @@ function Settlement:init(def)
     self.x = def.x
     self.y = def.y
     self.type = def.type
+    self.texture = 'overworld'
     self.width = SETTLEMENT_TYPES[self.type].width --returns a number of tiles
     self.height = SETTLEMENT_TYPES[self.type].height --returns a number of tiles
-    self.tileMap = def.tileMap
-    self.canvas = love.graphics.newCanvas(self.width * TILE_SIZE, self.height * TILE_SIZE)
-    self:generateCanvas()
     self.tiles = {}
-    
+    self:generateTiles()
 end
 
 function Settlement:update(dt)
@@ -18,23 +16,30 @@ function Settlement:update(dt)
 end
 
 function Settlement:render()
-    love.graphics.draw(self.canvas, (self.x - 1) * TILE_SIZE, (self.y - 1) * TILE_SIZE)
+    for t, tile in pairs(self.tiles) do
+        tile:render()
+    end
 end
 
-function Settlement:generateCanvas()
-    love.graphics.setCanvas(self.canvas)
+function Settlement:generateTiles()
+    
     if self.type == 'house' then
-        local t = math.random(6) --number of types of 1-tiled houses
-        love.graphics.draw(gTextures[self.texture], gFrames[SETTLEMENT_TYPES[self.type][t]],
-        0, 0)
+        local f = table.randomChoice(SETTLEMENT_TYPES[self.type]['tiles']) -- pick a random house tiles
+        local tile = Tile{x = self.x, y = self.y,
+        texture = self.texture,
+        frame = f, land = true}
+        
+        table.insert(self.tiles, tile)
     else
         local textureCounter = 0
         for y = 0,  self.height - 1 do
             for x = 0, self.width - 1 do
-            
-                love.graphics.draw(gTextures[self.texture], 
-                gFrames[SETTLEMENT_TYPES[self.type]['startTile'] + textureCounter],
-                x * TILE_SIZE, y * TILE_SIZE)
+                
+                local tile = Tile{x = self.x + x, y = self.y + y,
+                texture = self.texture, frame =  SETTLEMENT_TYPES[self.type]['startTile'] + textureCounter,
+                land = true}
+                
+                table.insert(self.tiles, tile)
                 
                 textureCounter = textureCounter + 1
                 
@@ -42,9 +47,10 @@ function Settlement:generateCanvas()
 
             end  
         
-            textureCounter = textureCounter + 27 - self.width --26 tiles in a row on the assembly sheet, offset by one
+            textureCounter = textureCounter + 26 - self.width --26 tiles in a row on the assembly sheet
         end
     end 
-    love.graphics.setCanvas()
+    
 end
+
 

@@ -7,7 +7,8 @@ function TileMap:init(def)
     self.tiles = {}
     self.windField = {}
     self.canvas = love.graphics.newCanvas(WORLD_WIDTH * TILE_SIZE, WORLD_HEIGHT * TILE_SIZE)
-
+    self.settlements = {}
+    
 end
 
 function TileMap:update(dt)
@@ -31,6 +32,9 @@ end
 function TileMap:render()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.canvas, 0, 0)
+    for s, settlement in pairs(self.settlements) do
+        settlement:render()
+    end
 end
 
 --output the tile that the point (x, y) is on
@@ -181,3 +185,45 @@ function TileMap:getTopTile(x, y)
 end
 
 
+function TileMap:generateSettlements()
+    
+    for y = 1, WORLD_HEIGHT do
+        for x = 1, WORLD_WIDTH do
+            if self:getTopTile(x, y).land then
+                if math.random(100) == 1 then
+                    --get current width of land
+                    local offX, offY = x, y
+                    local w, h = 0, 0
+                    while self:getTopTile(offX, offY).land do
+                        offX = offX + 1
+                        w = w + 1
+                        
+                    end
+                    offX = x
+
+                    --get height of land 
+                    while self:getTopTile(offX, offY).land do
+                        offY = offY + 1
+                        h = h + 1
+                    end
+
+                    --get available types of settlement
+                    local possibleTypes = {}
+                    for t, type in pairs(SETTLEMENT_TYPES) do
+                        if SETTLEMENT_TYPES[type].width <= w and SETTLEMENT_TYPES[type].height <= h then
+                            table.insert(possibleTypes, type)
+                        end
+                    end
+
+                    local type = table.randomChoice(possibleTypes)
+
+                    local s = Settlement{x = x, y = y,
+                    type = type, tileMap = self}
+
+                    table.insert(self.settlements, s)
+                end
+            end
+        end
+    end
+    
+end

@@ -58,7 +58,8 @@ function Player:update(dt)
 
     
     if love.keyboard.isDown('down') then
-        self.body:applyForce(-math.cos(self.rotation + math.pi/2) * self.strafeForce, -math.sin(self.rotation + math.pi/2) * 10000)
+        self.body:applyForce(-math.cos(self.rotation + math.pi/2) * self.strafeForce, 
+        -math.sin(self.rotation + math.pi/2) * self.strafeForce)
     end
     if love.keyboard.isDown('up') then
         self.body:applyForce(math.cos(self.rotation + math.pi/2) * self.strafeForce, 

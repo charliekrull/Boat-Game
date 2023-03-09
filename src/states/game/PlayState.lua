@@ -67,6 +67,8 @@ function PlayState:init()
     
     
     self.landFixtures = self:addLandFixtures()
+    self:generateSettlements()
+
     
     --place the player so we're not on land
     local waterTiles = {}
@@ -80,6 +82,8 @@ function PlayState:init()
             end
         end
     end
+
+    
     
     local chosenTile = table.randomChoice(waterTiles)
 
@@ -100,13 +104,19 @@ function PlayState:update(dt)
 
     for k, click in pairs(love.mouse.buttonsPressed()) do
         if click.button == 1 then
-            local clickedTile = self.currentMap:pointToTile(click.x+ self.camX, click.y + self.camY)
-            if clickedTile and clickedTile.autoTileFrame then
-                print(clickedTile.autoTileFrame)
-            else
-                print(nil)
-            end
+            local virtualX = map(0, WINDOW_WIDTH, 0, VIRTUAL_WIDTH, click.x)
+            local virtualY = map(0, WINDOW_HEIGHT, 0, VIRTUAL_HEIGHT, click.y)
 
+            local gridX = math.floor(((virtualX + self.camX)/TILE_SIZE) + 1)
+            local gridY = math.floor(((virtualY + self.camY)/TILE_SIZE) + 1)
+
+            for s, settlement in pairs(self.currentMap.settlements) do
+                for t, tile in pairs(settlement.tiles) do
+                    if tile.x == gridX and tile.y == gridY then
+                        print(tile.frame)
+                    end
+                end
+            end
         end
     end
     
@@ -140,6 +150,7 @@ function PlayState:render()
     love.graphics.push()
     love.graphics.translate(-math.floor(self.camX), -math.floor(self.camY))
     self.currentMap:render()
+    
     love.graphics.setColor(1, 1, 1, 1)
     for k, ship in pairs(self.ships) do
         ship:render()
@@ -161,6 +172,7 @@ function PlayState:render()
     self.player.healthBar:render()
     self.player.sailDeployedBar:render()
     self.player.windicator:render()
+   
     
     love.graphics.setColor(1, 1, 1, 1)
     
@@ -306,3 +318,43 @@ function PlayState:drawWindicator()
     
 end
 
+function PlayState:generateSettlements()
+    
+    for y = 1, WORLD_HEIGHT do
+        for x = 1, WORLD_WIDTH do
+            if self.currentMap:getTopTile(x, y).land then
+                if math.random(100) == 1 then
+                    --get current width of land
+                    local w, h = 0, 0
+                    while x + w <= WORLD_WIDTH and self.currentMap:getTopTile(x + w, y).land do
+                        
+                        w = w + 1
+                        
+                    end
+
+                    --get height of land 
+                    while y + h <= WORLD_HEIGHT and self.currentMap:getTopTile(x, y + h).land do
+                        
+                        h = h + 1
+                    end
+
+                    --get available types of settlement
+                    local possibleTypes = {}
+                    for t, type in pairs(SETTLEMENT_TYPES) do
+                        if SETTLEMENT_TYPES[t].width <= w and SETTLEMENT_TYPES[t].height <= h then
+                            table.insert(possibleTypes, t)
+                        end
+                    end
+
+                    local type = table.randomChoice(possibleTypes)
+
+                    local s = Settlement{x = x, y = y,
+                    type = type, tileMap = self.currentMap}
+
+                    table.insert(self.currentMap.settlements, s)
+                end
+            end
+        end
+    end
+    
+end
