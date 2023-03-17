@@ -22,3 +22,9 @@ SETTLEMENT_TYPES = {
 --tile id's
 WATER_ID = 626
 GRASS_ID = 80
+
+ISLAND_TILES = {53, 54, 55,
+                79, 80, 81,
+                105, 106, 107,
+            
+            2, 3, 4, 28, 29}

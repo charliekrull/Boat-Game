@@ -13,8 +13,8 @@ function PlayState:init()
     }
     self.currentMap.tiles = self:generateWorld(self.currentMap.width, self.currentMap.height, self.currentMap.layers)
 
-    --self.currentMap:getAutoTileValues()
-    --self.currentMap:applyAutoTile()
+    self.currentMap:getAutoTileValues()
+    self.currentMap:applyAutoTile()
     self.currentMap.windField = self:generateWindField()
     self.windDirCanvas = love.graphics.newCanvas(TILE_SIZE, TILE_SIZE)
     love.graphics.setCanvas(self.windDirCanvas)
@@ -254,7 +254,7 @@ function PlayState:addLandFixtures()
         for x = 1, WORLD_WIDTH do
             local id = self.currentMap:getTopTile(x, y).frame
             
-            if id == GRASS_ID then
+            if table.contains(ISLAND_TILES, id) then
                 local bod = love.physics.newBody(self.world, (x-1) * TILE_SIZE, (y - 1) * TILE_SIZE, 'static')
                 local shape = love.physics.newRectangleShape(TILE_SIZE/2, TILE_SIZE/2, TILE_SIZE, TILE_SIZE)
                 local fix = love.physics.newFixture(bod, shape)

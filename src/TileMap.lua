@@ -56,20 +56,16 @@ function TileMap:getAutoTileValues()
                 ['S'] = false,
                 ['W'] = false}
 
-            local surroundingGrass = {['N'] = false,
-                ['E'] = false,
-                ['S'] = false,
-                ['W'] = false}
+                
             --print_r(self:getTopTile(x, y))
-            if table.contains(LAND_TILE_VALUES, self:getTopTile(x, y).frame) then
+            if table.contains(ISLAND_TILES, self:getTopTile(x, y).frame) then
                 --check the tile on each side:
                 --North
                 local tile = self:getTopTile(x, y-1)
-                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
+                if tile and table.contains(ISLAND_TILES, tile.frame) then
                     surroundingLand['N'] = true
-                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
-                        surroundingGrass['N'] = true
-                    end
+                    
+                   
                     
                 end
 
@@ -77,30 +73,24 @@ function TileMap:getAutoTileValues()
 
                 --East
                 tile = self:getTopTile(x+1, y)
-                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
+                if tile and table.contains(ISLAND_TILES, tile.frame) then
                     surroundingLand['E'] = true
-                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
-                        surroundingGrass['E'] = true
-                    end
+                   
                 end
 
                 --South
                 tile = self:getTopTile(x, y+1)
-                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
+                if tile and table.contains(ISLAND_TILES, tile.frame) then
                 
                     surroundingLand['S'] = true
-                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
-                        surroundingGrass['S'] = true
-                    end
+                   
                 end
 
                 --West
                 tile = self:getTopTile(x-1, y)
-                if tile and table.contains(LAND_TILE_VALUES, tile.frame) then
+                if tile and table.contains(ISLAND_TILES, tile.frame) then
                     surroundingLand['W'] = true
-                    if table.contains(GRASS_TILE_VALUES, tile.frame) then
-                        surroundingGrass['W'] = true
-                    end
+                    
                 end
             end
             
@@ -125,22 +115,31 @@ function TileMap:getAutoTileValues()
                 autoTileFrame = autoTileFrame + 8
                 
             end
-            local hasGrass = false
-            if surroundingGrass['N'] or surroundingGrass['E'] or 
-                surroundingGrass['S'] or surroundingGrass['W'] then
-                
-                hasGrass = true
-            end
 
-            if hasGrass then
-                autoTileFrame = autoTileFrame + 16
+            if autoTileFrame == 15 then
+                if self:getTopTile(x + 1, y + 1) and self:getTopTile(x + 1, y+1).id == WATER_ID then
+                    autoTileFrame = 16
+
+                elseif self:getTopTile(x+1, y-1) and self:getTopTile(x+1, y-1).id == WATER_ID then
+                    autoTileFrame = 18    
+                
+                elseif self:getTopTile(x-1, y-1) and self:getTopTile(x-1, y-1).id == WATER_ID then
+                    autoTileFrame = 19
+
+                elseif self:getTopTile(x-1, y+1) and self:getTopTile(x-1, y+1).id == WATER_ID then
+                    autoTileFrame = 17    
+                
+                end
+                                
             end
+            
 
 
 
             self:getTopTile(x, y).autoTileFrame = autoTileFrame
             self:getTopTile(x, y).surroundingLand = surroundingLand
-            self:getTopTile(x, y).surroundingGrass = surroundingGrass
+            
+           
 
             
             end
@@ -158,7 +157,7 @@ function TileMap:applyAutoTile()
         for y = 1, self.height do
             for x = 1, self.width do
                 if self.tiles[z][y][x] then
-                    if self.tiles[z][y][x].frame ~= 73 then --if it's not water, change its frame according to the autotile algorithm
+                    if self.tiles[z][y][x].frame ~= WATER_ID then --if it's not water, change its frame according to the autotile value
                         self.tiles[z][y][x].frame = gAutoTileDict[self.tiles[z][y][x].autoTileFrame]
                     end
                 end
